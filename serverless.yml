@@ -1,0 +1,33 @@
+service: return-close-lambda
+useDotenv: true
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: us-east-1
+  environment:
+    KIBO_TENANT: ${env:KIBO_TENANT}
+    KIBO_LOCALE: ${env:KIBO_LOCALE}
+    KIBO_CURRENCY: ${env:KIBO_CURRENCY}
+    KIBO_AUTH_HOST: ${env:KIBO_AUTH_HOST}
+    KIBO_CLIENT_ID: ${env:KIBO_CLIENT_ID}
+    KIBO_SHARED_SECRET: ${env:KIBO_SHARED_SECRET}
+
+functions:
+  cronJobHandler:
+    handler: dist/handler.main
+    timeout: 120
+    events:
+      - schedule:
+          rate: rate(10 hours)
+          enabled: true
+
+plugins:
+  - serverless-offline
+
+package:
+  exclude:
+    - src/**
+    - tsconfig.json
+    - package-lock.json
+    - .gitignore
+
